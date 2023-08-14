@@ -1,0 +1,25 @@
+
+# @name register
+
+POST http://localhost:8080/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "jon",
+  "password": "jon"
+}
+
+
+###
+
+# @name login
+
+
+
+POST http://localhost:8080/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "yhoni",
+  "password": "admin"
+}

@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: yhoni
+    username: yhoni
+    url: jdbc:postgresql://localhost:5432/blog-app-dev
+
+  jpa:
+    database: postgresql
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+app:
+  jwt_secret: secretkey
+  jwt_expiration: 604800000

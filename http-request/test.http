@@ -1,0 +1,3 @@
+@url = http://localhost:8080/api
+GET {{url}}/user/test HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ5aG9uaSIsImlhdCI6MTY5MjAxODA2OCwiZXhwIjoxNjkyNjIyODY4fQ.o3nUr1oWMpaonv2Lzznef-rdocltCWuJwZqtMZfYwmw
