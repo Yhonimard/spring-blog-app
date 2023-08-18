@@ -19,9 +19,6 @@ create table users
     primary key (username)
 );
 
-alter table users
-    alter column first_name drop not null;
-
 create table comments
 (
     id           varchar(100) not null,
@@ -51,3 +48,19 @@ create table user_role
     constraint fk_user_role_roles foreign key (role_id) references roles (id)
 );
 
+
+create table post_images
+(
+    id         varchar(100) not null,
+    post_id    varchar(100) not null,
+    image_name varchar(100) not null,
+    image      bytea        not null,
+    primary key (id),
+    constraint fk_post_images_posts foreign key (post_id) references posts (id)
+);
+
+
+
+SELECT column_name, data_type, character_maximum_length
+FROM information_schema.columns
+WHERE table_name = 'post_images';

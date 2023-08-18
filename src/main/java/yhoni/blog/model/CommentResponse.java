@@ -1,7 +1,5 @@
 package yhoni.blog.model;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-
 import lombok.*;
 
 @Builder

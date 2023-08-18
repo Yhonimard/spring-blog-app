@@ -1,6 +1,5 @@
 package yhoni.blog.controller;
 
-
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,6 @@ public class AuthController {
                 .build();
     }
 
-
     @PostMapping("/login")
     public JwtApiAuthResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         Optional<User> existingUser = userRepository.findById(request.getUsername());
@@ -79,15 +77,12 @@ public class AuthController {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
-                request.getPassword()
-        ));
-
+                request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = existingUser.get();
         String token = jwtGenerator.generateToken(authentication);
-
 
         return JwtApiAuthResponse.<AuthResponse>builder()
                 .message("login success")
@@ -99,6 +94,5 @@ public class AuthController {
     private AuthResponse toAuthResponse(User user) {
         return modelMapper.map(user, AuthResponse.class);
     }
-
 
 }

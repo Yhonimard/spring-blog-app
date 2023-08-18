@@ -1,11 +1,11 @@
 package yhoni.blog.model;
 
 import lombok.*;
-import yhoni.blog.entity.Comment;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -13,6 +13,6 @@ public class PostResponse {
     private String id;
     private String title;
     private String content;
-
     private List<CommentResponse> comments;
+    private List<PostImageResponse> images;
 }

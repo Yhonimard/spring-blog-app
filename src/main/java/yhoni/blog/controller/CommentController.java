@@ -22,69 +22,69 @@ import yhoni.blog.service.CommentService;
 @RestController
 @RequestMapping(value = "/api/post/{postId}/comment", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @PostMapping("/user/{userId}")
-    public WebResponse<CommentResponse> create(
-            @PathVariable("postId") String postId,
-            @PathVariable("userId") String userId,
-            Authentication authentication,
-            @RequestBody CommentRequest request) {
+	@PostMapping("/user/{userId}")
+	public WebResponse<CommentResponse> create(
+			@PathVariable("postId") String postId,
+			@PathVariable("userId") String userId,
+			Authentication authentication,
+			@RequestBody CommentRequest request) {
 
-        CommentResponse comment = commentService.createComment(postId, userId, authentication, request);
+		CommentResponse comment = commentService.createComment(postId, userId, authentication, request);
 
-        return WebResponse.<CommentResponse>builder()
-                .message("success create comment")
-                .data(comment)
-                .build();
-    }
+		return WebResponse.<CommentResponse>builder()
+				.message("success create comment")
+				.data(comment)
+				.build();
+	}
 
-    @GetMapping
-    public WebResponse<List<CommentResponse>> getAll(@PathVariable("postId") String postId) {
-        List<CommentResponse> commentResponses = commentService.getAll(postId);
+	@GetMapping
+	public WebResponse<List<CommentResponse>> getAll(@PathVariable("postId") String postId) {
+		List<CommentResponse> commentResponses = commentService.getAll(postId);
 
-        return WebResponse.<List<CommentResponse>>builder()
-                .data(commentResponses)
-                .message("success get all comments")
-                .build();
-    }
+		return WebResponse.<List<CommentResponse>>builder()
+				.data(commentResponses)
+				.message("success get all comments")
+				.build();
+	}
 
-    @GetMapping("/{commentId}")
-    public WebResponse<CommentResponse> getCommentByPostIdAndCommentId(@PathVariable("postId") String postId,
-                                                                       @PathVariable("commentId") String commentId) {
-        CommentResponse response = commentService.getByPostIdAndCommentId(postId, commentId);
+	@GetMapping("/{commentId}")
+	public WebResponse<CommentResponse> getCommentByPostIdAndCommentId(@PathVariable("postId") String postId,
+			@PathVariable("commentId") String commentId) {
+		CommentResponse response = commentService.getByPostIdAndCommentId(postId, commentId);
 
-        return WebResponse.<CommentResponse>builder()
-                .message("success get comment by id " + response.getId())
-                .data(response)
-                .build();
-    }
+		return WebResponse.<CommentResponse>builder()
+				.message("success get comment by id " + response.getId())
+				.data(response)
+				.build();
+	}
 
-    @PutMapping("/{commentId}/user/{userId}")
-    public WebResponse<CommentResponse> updateCommentById(@PathVariable("postId") String postId,
-                                                          @PathVariable("commentId") String commentId,
-                                                          @PathVariable("userId") String userId,
-                                                          Authentication authentication,
-                                                          @RequestBody CommentRequest request) {
+	@PutMapping("/{commentId}/user/{userId}")
+	public WebResponse<CommentResponse> updateCommentById(@PathVariable("postId") String postId,
+			@PathVariable("commentId") String commentId,
+			@PathVariable("userId") String userId,
+			Authentication authentication,
+			@RequestBody CommentRequest request) {
 
-        CommentResponse response = commentService.updateById(postId, commentId, userId, authentication, request);
+		CommentResponse response = commentService.updateById(postId, commentId, userId, authentication,
+				request);
 
-        return WebResponse.<CommentResponse>builder()
-                .message("success update comment")
-                .data(response)
-                .build();
-    }
+		return WebResponse.<CommentResponse>builder()
+				.message("success update comment")
+				.data(response)
+				.build();
+	}
 
-    @DeleteMapping("/{commentId}/user/{userId}")
-    public WebResponse<?> deleteCommentById(@PathVariable("postId") String postId,
-                                            @PathVariable("commentId") String commentId,
-                                            @PathVariable("userId") String userId,
-                                            Authentication authentication
-    ) {
-        commentService.deleteById(postId, commentId, userId, authentication);
-        return WebResponse.builder()
-                .message("success delete this comment")
-                .build();
-    }
+	@DeleteMapping("/{commentId}/user/{userId}")
+	public WebResponse<?> deleteCommentById(@PathVariable("postId") String postId,
+			@PathVariable("commentId") String commentId,
+			@PathVariable("userId") String userId,
+			Authentication authentication) {
+		commentService.deleteById(postId, commentId, userId, authentication);
+		return WebResponse.builder()
+				.message("success delete this comment")
+				.build();
+	}
 }

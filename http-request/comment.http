@@ -1,8 +1,0 @@
-
-POST http://localhost:8080/api/post/4c6b326b-c8fe-4f06-873c-80d803f87ef4/user/yhoni/comment
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ5aG9uaSIsImlhdCI6MTY5MjAxODA2OCwiZXhwIjoxNjkyNjIyODY4fQ.o3nUr1oWMpaonv2Lzznef-rdocltCWuJwZqtMZfYwmw
-
-{
-  "title": "some title"
-}

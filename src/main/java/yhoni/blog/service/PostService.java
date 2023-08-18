@@ -1,12 +1,15 @@
 package yhoni.blog.service;
 
+import java.io.IOException;
+
 import org.springframework.data.domain.Page;
-import yhoni.blog.entity.Post;
+import org.springframework.web.multipart.MultipartFile;
+
 import yhoni.blog.model.PostRequest;
 import yhoni.blog.model.PostResponse;
 
 public interface PostService {
-    PostResponse createPost(PostRequest request);
+    PostResponse createPost(PostRequest request, MultipartFile file) throws IOException;
 
     Page<PostResponse> getAllPost(int page, int size, String sort);
 
