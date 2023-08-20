@@ -12,8 +12,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import yhoni.blog.entity.Role;
 import yhoni.blog.entity.User;
 import yhoni.blog.repository.RoleRepository;
@@ -21,6 +30,7 @@ import yhoni.blog.repository.UserRepository;
 import yhoni.blog.request.AuthRequest;
 import yhoni.blog.response.AuthResponse;
 import yhoni.blog.response.JwtApiAuthResponse;
+import yhoni.blog.response.WebErrorResponse;
 import yhoni.blog.response.WebResponse;
 import yhoni.blog.security.JwtGenerator;
 
@@ -50,6 +60,13 @@ public class AuthController {
     private ModelMapper modelMapper;
 
     @PostMapping("/register")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(description = "this api for registering", summary = "register account", responses = {
+            @ApiResponse(responseCode = "201", description = "created"),
+            @ApiResponse(responseCode = "409", description = "username conflict", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+    })
+    @Tag(name = "Auth", description = "Auth API")
     public WebResponse<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
 
         if (userRepository.existsById(request.getUsername())) {
@@ -72,6 +89,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(description = "this api for login", summary = "login account", responses = {
+            @ApiResponse(responseCode = "200", description = "success"),
+            @ApiResponse(responseCode = "401", description = "username or password wrong", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+    })
     public JwtApiAuthResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         Optional<User> existingUser = userRepository.findById(request.getUsername());
         if (existingUser.isEmpty()) {
