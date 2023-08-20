@@ -173,8 +173,8 @@ public class PostController {
 	@GetMapping(value = "/image/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
 	@Operation(description = "this api requires image id to show the image", summary = "get post image by post image id", responses = {
 			@ApiResponse(responseCode = "200", description = "success"),
-			@ApiResponse(responseCode = "404", description = "image not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
-			@ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+			@ApiResponse(responseCode = "404", description = "image not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+			@ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
 	})
 	@Parameters({
 			@Parameter(name = "imageId", description = "image id"),
