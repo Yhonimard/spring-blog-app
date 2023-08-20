@@ -39,6 +39,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "Auth API")
 public class AuthController {
 
     @Autowired
@@ -66,7 +67,6 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "username conflict", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
     })
-    @Tag(name = "Auth", description = "Auth API")
     public WebResponse<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
 
         if (userRepository.existsById(request.getUsername())) {
