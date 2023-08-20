@@ -8,13 +8,14 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 
 public interface CommentService {
-    CommentResponse createComment(String postId, String userId, Authentication authentication, CommentRequest request);
+    CommentResponse createComment(String postId, Authentication authentication, CommentRequest request);
 
     List<CommentResponse> getAll(String postId);
 
     CommentResponse getByPostIdAndCommentId(String postId, String commentId);
 
-    CommentResponse updateById(String postId, String commentId, String userId, Authentication authentication, CommentRequest request);
+    CommentResponse updateById(String postId, String commentId, Authentication authentication,
+            CommentRequest request);
 
-    void deleteById(String postId, String commentId, String userId, Authentication authentication);
+    void deleteById(String postId, String commentId, Authentication authentication);
 }

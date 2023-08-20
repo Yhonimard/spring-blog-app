@@ -1,7 +1,9 @@
 package yhoni.blog.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -11,11 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.persistence.criteria.Predicate;
 import yhoni.blog.entity.Post;
 import yhoni.blog.entity.PostImage;
 import yhoni.blog.model.PostRequest;
@@ -42,11 +47,18 @@ public class PostServiceImpl implements PostService {
         Post postEntity = toPostEntity(request);
         Post post = postRepository.save(postEntity);
 
-        PostImage postImage = new PostImage();
-        postImage.setImage(file.getBytes());
-        postImage.setImageName(file.getOriginalFilename());
-        postImage.setId(UUID.randomUUID().toString());
-        postImage.setPost(post);
+        PostImage postImage = PostImage.builder()
+                .image(file.getBytes())
+                .id(UUID.randomUUID().toString())
+                .imageName(file.getOriginalFilename())
+                .post(post)
+                .build();
+
+        // PostImage postImage = new PostImage();
+        // postImage.setImage(file.getBytes());
+        // postImage.setImageName(file.getOriginalFilename());
+        // postImage.setId(UUID.randomUUID().toString());
+        // postImage.setPost(post);
         postImageRepository.save(postImage);
 
         PostResponse postResponse = toPostResponse(post);
@@ -55,11 +67,30 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PageImpl<PostResponse> getAllPost(int page, int size, String sort) {
+    public PageImpl<PostResponse> getAllPost(int pageNo, int size, String sortBy, String sortDir, String search) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Specification<Post> specification = (root, query, builder) -> {
 
-        Page<Post> posts = postRepository.findAll(pageable);
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (Objects.nonNull(search)) {
+                // predicates.add(builder.like(root.get("title"), "%" + search + "%"));
+
+                predicates.add(
+                        builder.or(
+                                builder.like(root.get("title"), "%" + search + "%"),
+                                builder.like(root.get("content"), "%" + search + "%")));
+
+            }
+            return query.where(predicates.toArray(new Predicate[] {})).getRestriction();
+        };
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, size, sort);
+
+        Page<Post> posts = postRepository.findAll(specification, pageable);
 
         if (posts.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "posts not found");

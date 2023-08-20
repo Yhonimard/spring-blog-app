@@ -36,34 +36,44 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeHttpRequests(auth ->
-                auth.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        .requestMatchers("api/auth/**").permitAll()
-                        .requestMatchers("api/image/**").permitAll()
-                        .anyRequest().authenticated());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(
+                        "/api/auth/**",
+                        "/v2/api-docs",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui/**",
+                        "/webjars/**",
+                        "/swagger-ui.html",
+                        "/")
+                .permitAll()
+                .anyRequest().authenticated());
 
-//        http.httpBasic(Customizer.withDefaults());
-
+        // http.httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
 
-//    @Bean
-//    protected UserDetailsService userDetailsService() {
-//        UserDetails yhoni = User.builder()
-//                .username("yhoni")
-//                .password(passwordEncoder().encode("yhoni"))
-//                .roles("USER")
-//                .build();
-//
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password(passwordEncoder().encode("admin"))
-//                .roles("ADMIN")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(yhoni, admin);
-//    }
+    // @Bean
+    // protected UserDetailsService userDetailsService() {
+    // UserDetails yhoni = User.builder()
+    // .username("yhoni")
+    // .password(passwordEncoder().encode("yhoni"))
+    // .roles("USER")
+    // .build();
+    //
+    // UserDetails admin = User.builder()
+    // .username("admin")
+    // .password(passwordEncoder().encode("admin"))
+    // .roles("ADMIN")
+    // .build();
+    //
+    // return new InMemoryUserDetailsManager(yhoni, admin);
+    // }
 
     @Bean
     protected AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

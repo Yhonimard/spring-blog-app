@@ -38,23 +38,15 @@ public class CommentServiceImpl implements CommentService {
     private ModelMapper modelMapper;
 
     @Override
-    public CommentResponse createComment(String postId,
-                                         String userId,
-                                         Authentication authentication,
-                                         CommentRequest request) {
+    public CommentResponse createComment(
+            String postId,
+            Authentication authentication,
+            CommentRequest request) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cant find this post"));
 
-        log.info("user id = " + userId);
-        log.info("authentication.getname = " + authentication.getName());
-
-        if (!userId.toString().equals(authentication.getName().toString())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "you cannot change this user information");
-        }
-
-
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cannot find this user by this username"));
 
         Comment comment = toCommentEntity(request);
@@ -91,7 +83,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentResponse updateById(String postId, String commentId, String userId, Authentication authentication, CommentRequest request) {
+    public CommentResponse updateById(String postId, String commentId, Authentication authentication,
+            CommentRequest request) {
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cant find this post"));
         Comment comment = commentRepository.findById(commentId)
@@ -101,19 +95,19 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "comment doesnt belong to post");
         }
 
-        if (!userId.equals(authentication.getName())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "you cannot change this user information");
+        if (!comment.getUser().getUsername().equals(authentication.getName())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "youre not allowed to update this comment");
         }
 
         comment.setTitle(request.getTitle().isEmpty() ? comment.getTitle() : request.getTitle());
+
         return toCommentResponse(commentRepository.save(comment));
     }
 
     @Override
     public void deleteById(String postId,
-                           String commentId,
-                           String userId,
-                           Authentication authentication) {
+            String commentId,
+            Authentication authentication) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cant find this post"));
@@ -124,8 +118,8 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "comment doesnt belong to post");
         }
 
-        if (!userId.equals(authentication.getName())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "you cannot change this user information");
+        if (!comment.getUser().getUsername().equals(authentication.getName())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "youre not allowed to delete this comment");
         }
 
         commentRepository.deleteById(comment.getId());

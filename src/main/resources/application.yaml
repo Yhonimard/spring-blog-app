@@ -4,7 +4,10 @@ spring:
     password: yhoni
     username: yhoni
     url: jdbc:postgresql://localhost:5432/blog-app-dev
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB  
   jpa:
     database: postgresql
     properties:
@@ -15,3 +18,11 @@ spring:
 app:
   jwt_secret: secretkey
   jwt_expiration: 604800000
+
+server:
+  port: 5000
+
+
+springdoc:
+  swagger-ui:
+    path: "/"

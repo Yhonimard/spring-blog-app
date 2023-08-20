@@ -36,7 +36,7 @@ public class JwtGenerator {
                 .parseClaimsJws(token)
                 .getBody();
         return body.getSubject();
-    }
+    } 
 
     public Boolean validateToken(String token) {
 

@@ -14,5 +14,4 @@ import lombok.Setter;
 @Builder
 public class CommentRequest {
     private String title;
-    private String username;
 }
