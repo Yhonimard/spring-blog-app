@@ -3,17 +3,18 @@ spring:
     driver-class-name: org.postgresql.Driver
     password: yhoni
     username: yhoni
-    url: jdbc:postgresql://localhost:5432/blog-app-dev
+    url: jdbc:postgresql://postgres-local-dev/blog-app-dev
+
   servlet:
     multipart:
       max-file-size: 10MB
-      max-request-size: 10MB  
+      max-request-size: 10MB
   jpa:
     database: postgresql
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
+    # properties:
+    #   hibernate:
+    #     show_sql: true
+    #     format_sql: true
 
 app:
   jwt_secret: secretkey
@@ -21,7 +22,6 @@ app:
 
 server:
   port: 5000
-
 
 springdoc:
   swagger-ui:
