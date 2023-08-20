@@ -1,4 +1,4 @@
-package yhoni.blog.model;
+package yhoni.blog.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

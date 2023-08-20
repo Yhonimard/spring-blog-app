@@ -14,10 +14,10 @@ public class PostImageServiceImpl implements PostImageService {
     @Autowired
     private PostImageRepository postImageRepository;
 
-
     @Override
     public byte[] getImageById(String imgId) {
-        PostImage postImage = postImageRepository.findById(imgId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "image is empty"));
+        PostImage postImage = postImageRepository.findById(imgId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "image is empty"));
         return postImage.getImage();
     }
 }

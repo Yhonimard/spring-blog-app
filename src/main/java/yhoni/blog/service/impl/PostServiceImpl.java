@@ -23,10 +23,10 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.persistence.criteria.Predicate;
 import yhoni.blog.entity.Post;
 import yhoni.blog.entity.PostImage;
-import yhoni.blog.model.PostRequest;
-import yhoni.blog.model.PostResponse;
 import yhoni.blog.repository.PostImageRepository;
 import yhoni.blog.repository.PostRepository;
+import yhoni.blog.request.PostRequest;
+import yhoni.blog.response.PostResponse;
 import yhoni.blog.service.PostService;
 
 @Service

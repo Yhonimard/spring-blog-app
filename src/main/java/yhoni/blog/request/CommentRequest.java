@@ -1,4 +1,4 @@
-package yhoni.blog.model;
+package yhoni.blog.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

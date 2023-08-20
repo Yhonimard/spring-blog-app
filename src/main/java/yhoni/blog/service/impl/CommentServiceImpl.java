@@ -14,15 +14,20 @@ import lombok.extern.slf4j.Slf4j;
 import yhoni.blog.entity.Comment;
 import yhoni.blog.entity.Post;
 import yhoni.blog.entity.User;
-import yhoni.blog.model.CommentRequest;
-import yhoni.blog.model.CommentResponse;
 import yhoni.blog.repository.CommentRepository;
 import yhoni.blog.repository.PostRepository;
 import yhoni.blog.repository.UserRepository;
+import yhoni.blog.request.CommentRequest;
+import yhoni.blog.response.CommentResponse;
 import yhoni.blog.service.CommentService;
 
 @Service
 @Slf4j
+/**
+ * Implementation of the {@link yhoni.blog.service.CommentService} interface for
+ * managing comments
+ * on posts.
+ */
 public class CommentServiceImpl implements CommentService {
 
     @Autowired
@@ -38,6 +43,17 @@ public class CommentServiceImpl implements CommentService {
     private ModelMapper modelMapper;
 
     @Override
+    /**
+     * Creates a new comment for a specified post.
+     *
+     * @param postId         The ID of the post to which the comment is added.
+     * @param authentication The authentication object representing the current
+     *                       user.
+     * @param request        The request containing comment details.
+     * @return A CommentResponse object representing the created comment.
+     * @throws ResponseStatusException If the specified post or user is not found.
+     * 
+     */
     public CommentResponse createComment(
             String postId,
             Authentication authentication,
@@ -59,6 +75,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    /**
+     * Get all post
+     *
+     * @param postId The ID of the post to which the comment is added.
+     * @return A list of CommentResponse object representing the created comment.
+     * @throws ResponseStatusException If the specified post not found.
+     * 
+     * 
+     */
+
     public List<CommentResponse> getAll(String postId) {
         postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cant find this post"));
@@ -69,6 +95,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    /**
+     * Retrieves a specific comment for a given post by their respective IDs.
+     *
+     * @param postId    The ID of the post to which the comment belongs.
+     * @param commentId The ID of the comment to retrieve.
+     * @return A CommentResponse object representing the requested comment.
+     * @throws ResponseStatusException If the specified post or comment is not
+     *                                 found, or if the comment does not belong to
+     *                                 the post.
+     */
     public CommentResponse getByPostIdAndCommentId(String postId, String commentId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "cant find this post"));
@@ -83,6 +119,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    /**
+     * Updates a specific comment for a given post by their respective IDs.
+     *
+     * @param postId         The ID of the post to which the comment belongs.
+     * @param commentId      The ID of the comment to update.
+     * @param authentication The authentication object representing the current
+     *                       user.
+     * @param request        The request containing object CommentRequest.
+     * @return A CommentResponse object representing the updated comment.
+     * @throws ResponseStatusException If the specified post or comment is not
+     *                                 found, if the comment doesn't belong to the
+     *                                 post,
+     *                                 or if the authenticated user is not
+     *                                 authorized to update the comment.
+     */
     public CommentResponse updateById(String postId, String commentId, Authentication authentication,
             CommentRequest request) {
 
@@ -105,6 +156,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    /**
+     * Deletes a specific comment for a given post by their respective IDs.
+     *
+     * @param postId         The ID of the post to which the comment belongs.
+     * @param commentId      The ID of the comment to delete.
+     * @param authentication The authentication object representing the current
+     *                       user.
+     * @throws ResponseStatusException If the specified post or comment is not
+     *                                 found, if the comment doesn't belong to the
+     *                                 post,
+     *                                 or if the authenticated user is not
+     *                                 authorized to delete the comment.
+     */
     public void deleteById(String postId,
             String commentId,
             Authentication authentication) {
@@ -125,10 +189,22 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(comment.getId());
     }
 
+    /**
+     * Converts a Comment entity into a CommentResponse object.
+     *
+     * @param comment The Comment entity to be converted.
+     * @return A CommentResponse object representing the comment.
+     */
     private CommentResponse toCommentResponse(Comment comment) {
         return modelMapper.map(comment, CommentResponse.class);
     }
 
+    /**
+     * Converts a CommentRequest object into a Comment entity.
+     *
+     * @param request The CommentRequest object containing comment details.
+     * @return A Comment entity representing the comment.
+     */
     private Comment toCommentEntity(CommentRequest request) {
         return modelMapper.map(request, Comment.class);
     }

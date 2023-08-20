@@ -1,13 +1,14 @@
 package yhoni.blog.service;
 
-import yhoni.blog.model.CommentRequest;
-import yhoni.blog.model.CommentResponse;
-
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
+import yhoni.blog.request.CommentRequest;
+import yhoni.blog.response.CommentResponse;
+
 public interface CommentService {
+
     CommentResponse createComment(String postId, Authentication authentication, CommentRequest request);
 
     List<CommentResponse> getAll(String postId);

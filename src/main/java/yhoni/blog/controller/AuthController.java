@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import yhoni.blog.entity.Role;
 import yhoni.blog.entity.User;
-import yhoni.blog.model.*;
 import yhoni.blog.repository.RoleRepository;
 import yhoni.blog.repository.UserRepository;
+import yhoni.blog.request.AuthRequest;
+import yhoni.blog.response.AuthResponse;
+import yhoni.blog.response.JwtApiAuthResponse;
+import yhoni.blog.response.WebResponse;
 import yhoni.blog.security.JwtGenerator;
 
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package yhoni.blog.model;
+package yhoni.blog.response;
 
 import java.util.List;
 

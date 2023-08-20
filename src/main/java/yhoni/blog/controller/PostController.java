@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +30,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import yhoni.blog.model.PagingResponse;
-import yhoni.blog.model.PostRequest;
-import yhoni.blog.model.PostResponse;
-import yhoni.blog.model.WebErrorResponse;
-import yhoni.blog.model.WebResponse;
+import yhoni.blog.request.PostRequest;
+import yhoni.blog.response.PagingResponse;
+import yhoni.blog.response.PostResponse;
+import yhoni.blog.response.WebErrorResponse;
+import yhoni.blog.response.WebResponse;
+import yhoni.blog.service.PostImageService;
 import yhoni.blog.service.PostService;
 
 @RestController
@@ -45,6 +46,9 @@ public class PostController {
 
 	@Autowired
 	private PostService postService;
+
+	@Autowired
+	private PostImageService postImageService;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
@@ -95,6 +99,7 @@ public class PostController {
 		Page<PostResponse> postResponse = postService.getAllPost(page, size, sortBy, sortDir, search);
 
 		return WebResponse.<PagingResponse<List<PostResponse>>>builder()
+				.message("success get post")
 				.data(PagingResponse.<List<PostResponse>>builder()
 						.data(postResponse.getContent())
 						.currentPage(postResponse.getNumber())
@@ -147,7 +152,7 @@ public class PostController {
 				.build();
 	}
 
-	@DeleteMapping("/{postId}")
+	@DeleteMapping(value = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(description = "this api requires admin role in your account to delete post by postId and can be error 404 if the post not found", summary = "delete post by postId", responses = {
 			@ApiResponse(responseCode = "200", description = "success"),
@@ -163,5 +168,20 @@ public class PostController {
 		return WebResponse.builder()
 				.message("success delete post by id " + id)
 				.build();
+	}
+
+	@GetMapping(value = "/image/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
+	@Operation(description = "this api requires image id to show the image", summary = "get post image by post image id", responses = {
+			@ApiResponse(responseCode = "200", description = "success"),
+			@ApiResponse(responseCode = "404", description = "image not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
+			@ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+	})
+	@Parameters({
+			@Parameter(name = "imageId", description = "image id"),
+	})
+	public ResponseEntity<?> getImage(@PathVariable("imageId") String imageId) {
+		byte[] image = postImageService.getImageById(imageId);
+
+		return ResponseEntity.ok(image);
 	}
 }

@@ -25,21 +25,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import yhoni.blog.model.CommentRequest;
-import yhoni.blog.model.CommentResponse;
-import yhoni.blog.model.WebErrorResponse;
-import yhoni.blog.model.WebResponse;
-import yhoni.blog.service.CommentService;
+import yhoni.blog.request.CommentRequest;
+import yhoni.blog.response.CommentResponse;
+import yhoni.blog.response.WebErrorResponse;
+import yhoni.blog.response.WebResponse;
+import yhoni.blog.service.impl.CommentServiceImpl;
 
 @RestController
-@RequestMapping(value = "/api/post/{postId}/comment", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/post/{postId}/comment", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Comment", description = "Comment API")
 @Slf4j
 public class CommentController {
-	@Autowired
-	private CommentService commentService;
 
-	@PostMapping
+	@Autowired
+	private CommentServiceImpl commentService;
+
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(code = HttpStatus.CREATED)
 	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "create comment in post", responses = {
 			@ApiResponse(responseCode = "201", description = "success"),
@@ -56,14 +57,6 @@ public class CommentController {
 			Authentication authentication,
 			@RequestBody CommentRequest request) {
 
-		// log.info("AUTHENTICATION.GETNAME = " + authentication.getName());
-		// log.info("AUTHENTICATION.getAuthorities = " +
-		// authentication.getAuthorities());
-		// log.info("AUTHENTICATION.getCredentials = " +
-		// authentication.getCredentials());
-		// log.info("AUTHENTICATION.getDetails = " + authentication.getDetails());
-		// log.info("AUTHENTICATION.getPrincipal = " + authentication.getPrincipal());
-
 		CommentResponse comment = commentService.createComment(postId, authentication, request);
 
 		return WebResponse.<CommentResponse>builder()
@@ -73,6 +66,14 @@ public class CommentController {
 	}
 
 	@GetMapping
+	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "get all comment in post", responses = {
+			@ApiResponse(responseCode = "201", description = "success"),
+			@ApiResponse(responseCode = "404", description = "post not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
+			@ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+	})
+	@Parameters({
+			@Parameter(name = "postId", description = "post id"),
+	})
 	public WebResponse<List<CommentResponse>> getAll(@PathVariable("postId") String postId) {
 		List<CommentResponse> commentResponses = commentService.getAll(postId);
 
@@ -83,6 +84,15 @@ public class CommentController {
 	}
 
 	@GetMapping("/{commentId}")
+	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "get comment by commentId in post", responses = {
+			@ApiResponse(responseCode = "201", description = "success"),
+			@ApiResponse(responseCode = "404", description = "post not found / comment not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
+			@ApiResponse(responseCode = "500", description = "something went wrong / an error occured", content = @Content(schema = @Schema(implementation = WebErrorResponse.class)))
+	})
+	@Parameters({
+			@Parameter(name = "postId", description = "post id"),
+			@Parameter(name = "commentId", description = "comment id"),
+	})
 	public WebResponse<CommentResponse> getCommentByPostIdAndCommentId(@PathVariable("postId") String postId,
 			@PathVariable("commentId") String commentId) {
 		CommentResponse response = commentService.getByPostIdAndCommentId(postId, commentId);
@@ -93,7 +103,7 @@ public class CommentController {
 				.build();
 	}
 
-	@PutMapping("/{commentId}")
+	@PutMapping(value = "/{commentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "update comment in post", responses = {
 			@ApiResponse(responseCode = "200", description = "success"),
 			@ApiResponse(responseCode = "401", description = "not allowed to update this comment / Unathorized", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
@@ -120,8 +130,8 @@ public class CommentController {
 				.build();
 	}
 
-	@DeleteMapping("/{commentId}")
-	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "update comment in post", responses = {
+	@DeleteMapping(value = "/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(description = "this api requires postId if postId not found will be throw 404 error", summary = "delete comment in post", responses = {
 			@ApiResponse(responseCode = "200", description = "success"),
 			@ApiResponse(responseCode = "401", description = "not allowed to delete this comment / Unathorized", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
 			@ApiResponse(responseCode = "404", description = "post not found / comment not found", content = @Content(schema = @Schema(implementation = WebErrorResponse.class))),
@@ -133,9 +143,11 @@ public class CommentController {
 			@Parameter(name = "commentId", description = "comment id"),
 	})
 	@SecurityRequirement(name = "bearerAuth")
-	public WebResponse<?> deleteCommentById(@PathVariable("postId") String postId,
+	public WebResponse<?> deleteCommentById(
+			@PathVariable("postId") String postId,
 			@PathVariable("commentId") String commentId,
 			Authentication authentication) {
+
 		commentService.deleteById(postId, commentId, authentication);
 		return WebResponse.builder()
 				.message("success delete this comment")

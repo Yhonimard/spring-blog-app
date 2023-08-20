@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import yhoni.blog.model.PostRequest;
-import yhoni.blog.model.PostResponse;
+import yhoni.blog.request.PostRequest;
+import yhoni.blog.response.PostResponse;
 
 public interface PostService {
     PostResponse createPost(PostRequest request, MultipartFile file) throws IOException;
